@@ -1,0 +1,20 @@
+services:
+  floci-gcp:
+    image: floci/floci-gcp:latest
+    container_name: floci-gcp
+    ports:
+      - "4588:4588"
+    volumes:
+      - ./floci-data/gcp:/app/data
+    environment:
+      FLOCI_GCP_HOSTNAME: floci-gcp
+      FLOCI_GCP_BASE_URL: http://floci-gcp:4588
+      FLOCI_GCP_STORAGE_MODE: hybrid
+
+  floci:
+    image: floci/floci:latest
+    container_name: floci-aws
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./floci-data/aws:/app/data
