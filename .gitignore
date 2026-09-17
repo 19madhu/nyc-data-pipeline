@@ -218,3 +218,7 @@ __marimo__/
 .streamlit/secrets.toml
 floci-data/
 credentials/
+airflow/logs/
+airflow/plugins/
+airflow/config/airflow.cfg
+airflow/.env
