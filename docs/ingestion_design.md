@@ -47,3 +47,32 @@ fast, zero-cost iteration loop during development. The same code works
 against real GCS with no changes — only the `client_options` endpoint
 changes — because the official `google-cloud-storage` SDK is used
 throughout, not custom HTTP calls.
+
+## Postmortem: duplicate rows during BigQuery load
+
+**What happened:** the initial version of `load_to_bigquery.py` had no
+tracking of which staged files had already been loaded. Running the script
+twice (once accidentally, before the fix was written) loaded every staged
+file both times, doubling the row count in BigQuery (25,000 → 50,000).
+
+**Root cause:** unlike the ingestion and transform stages — which were
+idempotent from the start — the BigQuery load stage was initially written
+without state tracking, since testing focused on "does it load correctly"
+rather than "is it safe to run twice."
+
+**Fix:** added a state file (`_state/loaded_to_bq.json`, stored in GCS)
+recording which staged files have already been loaded, following the same
+idempotency pattern used in ingestion and transformation. The load function
+now checks this state before loading each file and skips anything already
+processed.
+
+**Cleanup:** since duplicate rows already existed before the fix was
+deployed, a one-off `reset_bq_state.py` script was used to clear the load
+state, followed by `DELETE FROM ... WHERE TRUE` to clear the table, then a
+clean reload.
+
+**Lesson:** every write operation in a pipeline needs idempotency
+designed in from the start, not added after the fact once duplication is
+already observed in production. This also reinforced why running each new
+pipeline stage twice in a row — deliberately, as a test — should be a
+standard verification step, not just a "does it work once" check.
