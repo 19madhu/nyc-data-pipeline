@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw_nyc311
+    database: maddie19
+    schema: nyc311
+    tables:
+      - name: complaints
+        description: "Raw NYC 311 complaints, loaded from GCS via load_to_bigquery.py"
