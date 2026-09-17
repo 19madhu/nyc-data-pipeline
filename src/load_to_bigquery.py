@@ -9,7 +9,7 @@ from google.auth.credentials import AnonymousCredentials
 load_dotenv()
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
-GCS_ENDPOINT = "http://localhost:4588"
+GCS_ENDPOINT = os.getenv("GCS_ENDPOINT", "http://localhost:4588")
 
 DATASET_ID = "nyc311"
 TABLE_ID = "complaints"

@@ -9,7 +9,7 @@ from google.auth.credentials import AnonymousCredentials
 load_dotenv()
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
-GCS_ENDPOINT = "http://localhost:4588"
+GCS_ENDPOINT = os.getenv("GCS_ENDPOINT", "http://localhost:4588")
 
 # Fields we actually want to keep — a deliberate, documented subset
 FIELDS_TO_KEEP = [

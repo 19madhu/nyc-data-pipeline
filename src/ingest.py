@@ -13,7 +13,7 @@ load_dotenv()
 # --- Config ---
 SOCRATA_APP_TOKEN = os.getenv("NYC311_APP_TOKEN")
 SOCRATA_ENDPOINT = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
-GCS_ENDPOINT = "http://localhost:4588"
+GCS_ENDPOINT = os.getenv("GCS_ENDPOINT", "http://localhost:4588")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
 BUCKET_NAME = os.getenv("GCS_BUCKET_NAME_PROD") if ENVIRONMENT == "production" else "nyc311-raw-data"
 STATE_FILE_BLOB = "_state/last_run.json"

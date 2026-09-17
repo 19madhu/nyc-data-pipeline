@@ -1,0 +1,13 @@
+nyc311_dbt:
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('DBT_GCP_PROJECT', 'maddie19') }}"
+      dataset: nyc311_dbt
+      threads: 4
+      keyfile: "{{ env_var('DBT_KEYFILE_PATH') }}"
+      location: US
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+  target: dev
