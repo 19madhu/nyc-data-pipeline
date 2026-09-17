@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_complaints
+    description: "Cleaned, flattened NYC 311 complaints, one row per complaint."
+    columns:
+      - name: unique_key
+        description: "Unique identifier for each 311 complaint."
+        tests:
+          - unique
+          - not_null
+
+      - name: created_date
+        description: "Timestamp the complaint was created."
+        tests:
+          - not_null
+
+      - name: complaint_type
+        description: "Category of the complaint (e.g. Noise - Residential)."
+        tests:
+          - not_null
+
+      - name: status
+        description: "Current status of the complaint."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Open', 'Closed', 'Pending', 'In Progress', 'Assigned', 'Draft', 'Unspecified']
