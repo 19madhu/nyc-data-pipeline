@@ -2,3 +2,4 @@ google-cloud-storage
 python-dotenv
 requests
 google-cloud-bigquery
+dbt-bigquery
