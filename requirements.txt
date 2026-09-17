@@ -3,3 +3,4 @@ python-dotenv
 requests
 google-cloud-bigquery
 dbt-bigquery
+google-generativeai

@@ -6,7 +6,7 @@ nyc311_dbt:
       project: "{{ env_var('DBT_GCP_PROJECT', 'maddie19') }}"
       dataset: nyc311_dbt
       threads: 4
-      keyfile: "{{ env_var('DBT_KEYFILE_PATH') }}"
+      keyfile: "{{ env_var('DBT_KEYFILE_PATH', 'C:/Users/madhu/OneDrive/Desktop/projects/selfprojects/nyc-data-pipeline/credentials/maddie19-2bc04ecadddb.json') }}"
       location: US
       job_execution_timeout_seconds: 300
       job_retries: 1
