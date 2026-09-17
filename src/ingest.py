@@ -14,7 +14,8 @@ load_dotenv()
 SOCRATA_APP_TOKEN = os.getenv("NYC311_APP_TOKEN")
 SOCRATA_ENDPOINT = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
 GCS_ENDPOINT = "http://localhost:4588"
-BUCKET_NAME = "nyc311-raw-data"
+ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
+BUCKET_NAME = os.getenv("GCS_BUCKET_NAME_PROD") if ENVIRONMENT == "production" else "nyc311-raw-data"
 STATE_FILE_BLOB = "_state/last_run.json"
 
 FIRST_RUN_LOOKBACK_DAYS = 7  # named, deliberate default — not a magic number
@@ -23,12 +24,22 @@ RETRY_BACKOFF_SECONDS = 5  # doubles each retry: 5s, 10s, 20s
 
 
 def get_storage_client():
-    return storage.Client(
-        project="floci-local",
-        credentials=AnonymousCredentials(),
-        client_options={"api_endpoint": GCS_ENDPOINT},
-    )
+    """Switches between local Floci emulator and real GCP based on ENVIRONMENT.
+    Same code, same SDK calls, zero changes needed elsewhere in the script —
+    only the client configuration differs."""
+    environment = os.getenv("ENVIRONMENT", "local")
 
+    if environment == "production":
+        # Real GCP — authenticates using the service account key file
+        project_id = os.getenv("GCP_PROJECT_ID")
+        return storage.Client(project=project_id)
+    else:
+        # Local Floci emulator — no real credentials needed
+        return storage.Client(
+            project="floci-local",
+            credentials=AnonymousCredentials(),
+            client_options={"api_endpoint": GCS_ENDPOINT},
+        )
 
 def get_or_create_bucket(client):
     bucket = client.bucket(BUCKET_NAME)
