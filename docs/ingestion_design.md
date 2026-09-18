@@ -91,3 +91,34 @@ system — closed_date and status are not perfectly synchronized in the
 underlying data. The pipeline's calculation (resolution time based on
 closed_date) remains valid; only the schema documentation assumption was
 corrected to reflect this accurately.
+
+
+## Postmortem: SQL validator gap found via adversarial testing
+
+**What happened:** while testing the AI SQL assistant with a deliberately
+malicious question ("Delete all noise complaints from the Bronx"), the
+retry-on-failure logic worked correctly — the initial `DELETE` attempt was
+rejected, and the model retried with a `SELECT`. However, that retried query
+had no `LIMIT` clause and no aggregate function, and the validator's
+LIMIT-exemption logic incorrectly let it through, returning hundreds of raw
+rows uncapped.
+
+**Root cause:** the original validator only required a `LIMIT` clause when
+a `GROUP BY` was present, assuming any query without a `GROUP BY` was a safe
+single-row aggregate (like `COUNT(*)`). This assumption was wrong — a query
+can have neither `GROUP BY` nor `LIMIT` while still selecting raw columns
+and returning unbounded rows.
+
+**Fix:** the validator now inspects the actual `SELECT` clause. A missing
+`LIMIT` is only permitted when every selected item is a genuine aggregate
+function call (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`). Any other shape of
+query — including this exact failure case — now requires an explicit
+`LIMIT`. A regression test covering this specific query shape was added to
+the validator's test suite to prevent silent reintroduction.
+
+**Lesson:** defense-in-depth layers need to be tested against realistic
+adversarial inputs, not just the happy path — the retry-on-failure logic
+worked exactly as designed, but exposed a second, independent gap in the
+validation layer it fed into. Testing each layer in isolation is not
+enough; the layers need to be tested together, under actual failure
+conditions, to catch gaps like this one.
