@@ -47,12 +47,22 @@ def validate_sql(sql: str) -> str:
     has_group_by = re.search(r"\bGROUP\s+BY\b", upper_sql)
 
     if not has_limit:
-        if has_group_by:
-            # Grouped queries can return many rows — LIMIT is required
-            raise SQLValidationError("Query must include a LIMIT clause.")
-        else:
-            # Likely a simple aggregate (e.g. COUNT(*) with no GROUP BY) — safe without LIMIT
-            pass
+        # Only allow missing LIMIT if this is a genuine scalar aggregate query —
+        # i.e. the SELECT clause consists ONLY of aggregate functions (COUNT, SUM,
+        # AVG, MIN, MAX), nothing else. Anything else (raw columns, no GROUP BY,
+        # no LIMIT) can return unbounded rows and must be rejected.
+        select_clause_match = re.search(r"SELECT\s+(.*?)\s+FROM", cleaned, re.IGNORECASE | re.DOTALL)
+        is_scalar_aggregate = False
+
+        if select_clause_match:
+            select_items = select_clause_match.group(1).split(",")
+            is_scalar_aggregate = all(
+                re.match(r"^\s*(COUNT|SUM|AVG|MIN|MAX)\s*\(.*\)(\s+AS\s+\w+)?\s*$", item.strip(), re.IGNORECASE)
+                for item in select_items
+            )
+
+        if not is_scalar_aggregate:
+            raise SQLValidationError("Query must include a LIMIT clause (only pure aggregate queries like COUNT(*) may omit it).")
     else:
         # Enforce the max row limit even if the model set a higher one
         limit_value = int(has_limit.group().split()[-1])
@@ -70,6 +80,8 @@ if __name__ == "__main__":
         "SELECT * FROM maddie19.nyc311_dbt.complaint_resolution_analysis; DROP TABLE users",
         "SELECT COUNT(*) FROM maddie19.nyc311_dbt.complaint_resolution_analysis",
         "SELECT borough FROM other_table LIMIT 10",
+        "SELECT unique_key, borough FROM maddie19.nyc311_dbt.complaint_resolution_analysis WHERE borough = 'BRONX'",
+        
     ]
 
     for sql in test_cases:
@@ -79,3 +91,4 @@ if __name__ == "__main__":
             print(f"  VALID: {result}")
         except SQLValidationError as e:
             print(f"  REJECTED: {e}")
+            
