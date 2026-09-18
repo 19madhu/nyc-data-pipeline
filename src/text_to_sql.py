@@ -22,6 +22,7 @@ Rules:
 - Only use tables and columns that exist in the schema above.
 - Always include a LIMIT clause (max 100 rows) unless the question asks for an aggregate (like COUNT).
 - When a question refers to a general category that might span multiple exact values (e.g. "noise complaints" could mean several complaint_type values like 'Noise - Residential', 'Noise - Street/Sidewalk', 'Noise - Vehicle'), use LIKE '%keyword%' instead of an exact match, unless the question names an exact category.
+- When a question asks "which," "most," "least," "how many," or similar, always SELECT the aggregate value (e.g. COUNT(*)) alongside the grouping column, with a clear alias, so the result shows both the category and its number — not just the category alone.
 - Return ONLY the SQL query, no explanation, no markdown formatting, no backticks around the whole response."""),
     ("user", "{question}")
 ])
