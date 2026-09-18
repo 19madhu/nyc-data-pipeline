@@ -76,3 +76,18 @@ designed in from the start, not added after the fact once duplication is
 already observed in production. This also reinforced why running each new
 pipeline stage twice in a row — deliberately, as a test — should be a
 standard verification step, not just a "does it work once" check.
+
+## Data quality note: status vs. closed_date inconsistency
+
+While testing the AI SQL assistant, a question about "open complaints" against
+`complaint_resolution_analysis` (which only includes rows with a populated
+`closed_date`) returned 1,071 results — contradicting an earlier assumption
+that this table only contained fully "Closed" complaints. Investigation in
+BigQuery confirmed: of ~28,000 rows, 718 are still marked 'Open', 267
+'In Progress', and 86 'Assigned', despite having a closed_date value.
+
+This reflects a genuine data quality characteristic of NYC's source 311
+system — closed_date and status are not perfectly synchronized in the
+underlying data. The pipeline's calculation (resolution time based on
+closed_date) remains valid; only the schema documentation assumption was
+corrected to reflect this accurately.
