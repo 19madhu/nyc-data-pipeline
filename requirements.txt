@@ -8,3 +8,6 @@ ollama
 langchain
 langchain-community
 langchain-ollama
+scikit-learn
+pandas
+joblib
