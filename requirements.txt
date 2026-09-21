@@ -11,3 +11,4 @@ langchain-ollama
 scikit-learn
 pandas
 joblib
+boto3
