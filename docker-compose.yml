@@ -16,5 +16,22 @@ services:
     container_name: floci-aws
     ports:
       - "4566:4566"
+      - "9092:9092"
     volumes:
       - ./floci-data/aws:/app/data
+      - //var/run/docker.sock:/var/run/docker.sock 
+    depends_on:
+      - redpanda
+
+  redpanda:
+    image: redpandadata/redpanda:latest
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --overprovisioned
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:19092
+    ports:
+      - "19092:9092"
