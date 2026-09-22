@@ -1,15 +1,19 @@
 import os
+
 import joblib
 import pandas as pd
 from dotenv import load_dotenv
 from google.cloud import bigquery
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    precision_recall_curve,
+)
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.metrics import precision_recall_curve
+from sklearn.preprocessing import OneHotEncoder
 
 load_dotenv()
 
@@ -45,7 +49,6 @@ def build_pipeline() -> Pipeline:
     Categorical features (complaint_type, borough) are one-hot encoded;
     numeric features (hour, day of week) pass through unchanged."""
     categorical_features = ["complaint_type", "borough"]
-    numeric_features = ["created_hour", "created_day_of_week"]
 
     preprocessor = ColumnTransformer(
         transformers=[

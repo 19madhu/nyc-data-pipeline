@@ -13,3 +13,4 @@ pandas
 joblib
 boto3
 kafka-python
+ruff

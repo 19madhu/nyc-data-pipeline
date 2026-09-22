@@ -1,5 +1,5 @@
-from google.cloud import storage
 from google.auth.credentials import AnonymousCredentials
+from google.cloud import storage
 
 # Point the client at our local floci-gcp emulator instead of real GCP
 client = storage.Client(

@@ -1,10 +1,9 @@
-import os
 import json
+import os
 
 from dotenv import load_dotenv
-from google.cloud import bigquery
-from google.cloud import storage
 from google.auth.credentials import AnonymousCredentials
+from google.cloud import bigquery, storage
 
 load_dotenv()
 

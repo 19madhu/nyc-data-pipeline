@@ -1,10 +1,11 @@
-import os
 import json
+import os
 from datetime import datetime, timezone
+
 from dotenv import load_dotenv
-from kafka import KafkaProducer
-from google.cloud import storage
 from google.auth.credentials import AnonymousCredentials
+from google.cloud import storage
+from kafka import KafkaProducer
 
 load_dotenv()
 

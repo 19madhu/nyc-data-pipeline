@@ -1,24 +1,25 @@
 import os
-from typing import TypedDict, Optional
-from dotenv import load_dotenv
-from langgraph.graph import StateGraph, END
-from google.cloud import bigquery
+from typing import TypedDict
 
+from dotenv import load_dotenv
+from google.cloud import bigquery
+from langgraph.graph import END, StateGraph
+
+from sql_validator import SQLValidationError, validate_sql
 from text_to_sql import generate_sql
-from sql_validator import validate_sql, SQLValidationError
 
 load_dotenv()
 
 
 class AgentState(TypedDict):
     question: str
-    previous_question: Optional[str]
-    previous_sql: Optional[str]
-    sql: Optional[str]
-    validation_error: Optional[str]
+    previous_question: str | None
+    previous_sql: str | None
+    sql: str | None
+    validation_error: str | None
     retry_count: int
-    rows: Optional[list]
-    final_error: Optional[str]
+    rows: list | None
+    final_error: str | None
 
 
 def get_bigquery_client():
@@ -125,7 +126,7 @@ def build_graph():
 sql_graph = build_graph()
 
 
-def answer_question(question: str, previous_question: str = None, previous_sql: str = None) -> dict:
+def answer_question(question: str, previous_question: str | None = None, previous_sql: str | None = None) -> dict:
     initial_state = {
         "question": question,
         "previous_question": previous_question,

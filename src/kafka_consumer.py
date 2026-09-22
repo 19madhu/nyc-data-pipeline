@@ -1,5 +1,7 @@
 import json
+
 from kafka import KafkaConsumer
+
 
 def get_broker_address() -> str:
     with open("kafka_broker.txt") as f:
