@@ -30,4 +30,3 @@ jobs:
       - name: Check Python files compile (syntax sanity check)
         run: |
           python -m py_compile src/*.py
-</parameter>
