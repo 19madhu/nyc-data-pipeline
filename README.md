@@ -1,5 +1,4 @@
-# NYC 311 Intelligent Operations & Decision Platform
-
+# NYC 311 Data Engineering & AI Platform
 An end-to-end data engineering and AI platform built on live NYC 311 complaint
 data -- from raw ingestion through a natural-language AI assistant, a
 predictive ML model, and real-time streaming, fully orchestrated and
