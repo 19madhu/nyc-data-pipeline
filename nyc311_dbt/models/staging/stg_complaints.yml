@@ -24,5 +24,4 @@ models:
         description: "Current status of the complaint."
         tests:
           - accepted_values:
-              arguments:
-                values: ['Open', 'Closed', 'Pending', 'In Progress', 'Assigned', 'Draft', 'Unspecified']
+              values: ['Open', 'Closed', 'Pending', 'In Progress', 'Assigned', 'Draft', 'Unspecified']

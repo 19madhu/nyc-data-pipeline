@@ -223,5 +223,5 @@ airflow/plugins/
 airflow/config/airflow.cfg
 airflow/.env
 nyc311_dbt/.user.yml
-models/
+/models/
 kafka_broker.txt

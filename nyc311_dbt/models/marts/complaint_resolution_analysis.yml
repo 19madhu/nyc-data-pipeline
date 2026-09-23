@@ -13,6 +13,5 @@ models:
         description: "Hours between created_date and closed_date."
         tests:
           - dbt_utils.accepted_range:
-              arguments:
-                min_value: 0
-                inclusive: true
+              min_value: 0
+              inclusive: true
