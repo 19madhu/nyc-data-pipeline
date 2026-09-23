@@ -42,7 +42,7 @@ def validate_sql(sql: str) -> str:
         raise SQLValidationError(f"Query must reference the authorized table: {ALLOWED_TABLE}")
 
     # Rule 5: must have a LIMIT, unless it's a pure aggregate query (no GROUP BY, single row expected)
-        has_limit = re.search(r"\bLIMIT\s+\d+", upper_sql)
+    has_limit = re.search(r"\bLIMIT\s+\d+", upper_sql)
 
     if not has_limit:
         # Only allow missing LIMIT if this is a genuine scalar aggregate query —
