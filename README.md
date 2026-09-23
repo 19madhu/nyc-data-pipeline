@@ -84,6 +84,28 @@ bottleneck -- with concrete next steps documented rather than a padded
 accuracy number.
 -> [`docs/ml_model_design.md`](docs/ml_model_design.md)
 
+## Live cloud deployment
+
+Ingestion and ML retraining don't just run locally -- they're deployed as
+real, scheduled cloud jobs, independent of any developer's machine being on.
+
+- **Containerized** with Docker, image stored in Google Artifact Registry
+- **Runs as Google Cloud Run Jobs** (`nyc311-ingestion-job`,
+  `nyc311-ml-training-job`), with credentials handled via Secret Manager --
+  never baked into the image
+- **Fully automated on a schedule** via Cloud Scheduler: ingestion daily at
+  6am UTC, ML retraining weekly
+- **Verified with a real, scheduler-triggered execution**: BigQuery's row
+  count increased from 50,000 to 75,000 rows via a run where Cloud Run's own
+  logs show it was executed by the service account, not a developer --
+  confirming the automation genuinely works unattended
+
+This closes a real gap: the rest of the system (Airflow, Kafka, the AI
+assistant) still runs locally by deliberate choice, since their managed
+cloud equivalents (Cloud Composer, Confluent Cloud, a hosted LLM) carry
+ongoing costs that aren't justified for a portfolio project. The ingestion
+and training layers -- the parts that actually need to run unattended --
+are the ones genuinely deployed.
 ## Engineering practices worth noting
 
 - **Idempotency by design, not retrofit** -- every write stage (ingest,
